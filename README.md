@@ -1,5 +1,5 @@
-# Basic Auto Project
-Project which contains basic automation test structure
+# Heroes Fire Project
+Project which tests the UI of the Heroes Fire website (heroesfire.com)
 
 - Java
 - TestNG
