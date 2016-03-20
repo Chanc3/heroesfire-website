@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class GuidesDisplay {
@@ -31,9 +32,8 @@ public class GuidesDisplay {
 	public void beforeClass() {
 	}
 
-	@Test
-	public void f() {
-		String hero = "anubarak";
+	@Test(dataProvider = "guideData")
+	public void guideDisplayTest(String hero) {
 		boolean nextPage = true;
 		boolean guideLoads = true;
 		List<WebElement> guides = new ArrayList<WebElement>();
@@ -69,5 +69,10 @@ public class GuidesDisplay {
 			}
 		}
 		Assert.assertEquals(guideLoads, true);
+	}
+
+	@DataProvider
+	private Object[][] guideData() {
+		return new Object[][] { new Object[] { "abathur" }, new Object[] { "anubarak" }, new Object[] { "jaina" } };
 	}
 }
