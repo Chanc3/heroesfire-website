@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Chrome Regression Suite">
+	<test name="Chrome Test">
+		<groups>
+			<run>
+				<include name="chrome"/>
+			</run>
+		</groups>
+		<classes>
+			<class name="com.heroesfire.test.GuidesDisplay"/>
+			<class name="com.heroesfire.test.StatsIncrease"/>
+		</classes>
+	</test>
+</suite>
