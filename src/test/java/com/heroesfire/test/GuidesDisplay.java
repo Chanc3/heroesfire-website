@@ -6,6 +6,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,20 +20,30 @@ public class GuidesDisplay {
 
 	private String BASE_URL = "http://www.heroesfire.com";
 
-	private WebDriver driver = new FirefoxDriver();
+	private WebDriver driver;
 
-	private WebDriverWait wait = new WebDriverWait(driver, 10);
+	private WebDriverWait wait;
 
-	@AfterClass
+	@AfterClass(groups = { "firefox", "chrome" })
 	public void afterClass() {
 		driver.quit();
 	}
 
-	@BeforeClass
-	public void beforeClass() {
+	@BeforeClass(groups = { "chrome" })
+	public void beforeClassChrome() {
+		System.setProperty("webdriver.chrome.driver",
+				"/Users/chance/Dropbox/sqaworkspace/heroesfire-website/Drivers/chromedriver");
+		driver = new ChromeDriver();
+		wait = new WebDriverWait(driver, 10);
 	}
 
-	@Test(dataProvider = "guideData")
+	@BeforeClass(groups = { "firefox" })
+	public void beforeClassFirefox() {
+		driver = new FirefoxDriver();
+		wait = new WebDriverWait(driver, 10);
+	}
+
+	@Test(dataProvider = "guideData", groups = { "firefox", "chrome" })
 	public void guideDisplayTest(String hero) {
 		boolean nextPage = true;
 		boolean guideLoads = true;
