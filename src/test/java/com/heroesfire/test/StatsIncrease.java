@@ -12,9 +12,20 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class StatsIncrease {
+
+	private static double calculateIncrease(double gain, double baseStat, int level) {
+		double newStat = baseStat;
+		if (gain != 0) {
+			for (int i = 1; i < level; i++) {
+				newStat = (newStat * gain) + newStat;
+			}
+		}
+		return newStat;
+	}
 
 	private String BASE_URL = "http://www.heroesfire.com";
 
@@ -26,39 +37,57 @@ public class StatsIncrease {
 
 	@AfterClass
 	public void afterClass() {
+		driver.quit();
 	}
 
 	@BeforeClass
 	public void beforeClass() {
 	}
 
-	@Test
-	public void f() {
+	@DataProvider
+	public Object[][] healthData() {
+		return new Object[][] { new Object[] { "abathur" }, new Object[] { "jaina" }, new Object[] { "butcher" } };
+	}
+
+	@Test(dataProvider = "healthData")
+	public void healthIncreaseTest(String hero) {
 		ArrayList<WebElement> stats = new ArrayList<WebElement>();
 		ArrayList<String> beforeStats = new ArrayList<String>();
 		ArrayList<String> afterStats = new ArrayList<String>();
+		ArrayList<Double> statGain = new ArrayList<Double>();
 		boolean statIncreased = true;
+		int level;
+		double total;
 		driver.get(BASE_URL);
-		driver.findElement(By.cssSelector(".self-clear>.megamenu a[href*='talent-calculator']")).click();
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".choose-hero a[href*='abathur'")))
+		wait.until(ExpectedConditions
+				.visibilityOfElementLocated(By.cssSelector(".self-clear>.megamenu a[href*='talent-calculator']")))
 				.click();
-		stats.addAll(wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".stats.mb10"))));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".choose-hero a[href*=" + hero)))
+				.click();
+		stats.add(wait.until(ExpectedConditions
+				.visibilityOfElementLocated(By.cssSelector(".stats.mb10>div:nth-child(1) [data-base]"))));
 		for (WebElement stat : stats) {
-			if (!stat.getText().contains("N/A")) {
-				beforeStats.add(stat.getText());
-			}
+			beforeStats.add(stat.getText());
 		}
 		stats.clear();
 		action.dragAndDropBy(
 				wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".ui-slider-handle"))), 20, 0)
 				.perform();
+		stats.addAll(wait.until(ExpectedConditions
+				.visibilityOfAllElementsLocatedBy(By.cssSelector(".stats.mb10>div:nth-child(1) [data-gain]"))));
 		for (WebElement stat : stats) {
 			if (!stat.getText().contains("N/A")) {
 				afterStats.add(stat.getText());
+				statGain.add(Double.parseDouble(stat.getAttribute("data-gain")));
 			}
 		}
+		level = Integer.parseInt(driver.findElement(By.cssSelector(".slider>.float-right")).getText());
 		for (int i = 0; i < beforeStats.size(); i++) {
-			statIncreased = Double.parseDouble(beforeStats.get(i)) < Double.parseDouble(afterStats.get(i));
+			total = calculateIncrease(statGain.get(i), Double.parseDouble(beforeStats.get(i)), level);
+			total = Math.round(total * 100.0) / 100.0;
+			statIncreased = (total + 0.01 == Double.parseDouble(afterStats.get(i))
+					|| total - 0.01 == Double.parseDouble(afterStats.get(i))
+					|| total == Double.parseDouble(afterStats.get(i)));
 			if (statIncreased == false) {
 				break;
 			}
