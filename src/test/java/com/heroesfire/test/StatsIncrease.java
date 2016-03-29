@@ -74,7 +74,8 @@ public class StatsIncrease {
 		boolean statIncreased = true;
 		int level;
 		double total;
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".choose-hero a[href*=" + hero)))
+		wait.until(
+				ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".choose-hero a[href*='" + hero + "']")))
 				.click();
 		stats.add(wait.until(ExpectedConditions
 				.visibilityOfElementLocated(By.cssSelector(".stats.mb10>div:nth-child(1) [data-base]"))));
@@ -121,8 +122,7 @@ public class StatsIncrease {
 		boolean statIncreased = true;
 		int level;
 		double total;
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".choose-hero a[href*=" + hero)))
-				.click();
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("a[href*='" + hero + "']"))).click();
 		stats.add(wait.until(ExpectedConditions
 				.visibilityOfElementLocated(By.cssSelector(".stats.mb10>div:nth-child(2) [data-base]"))));
 		for (WebElement stat : stats) {
