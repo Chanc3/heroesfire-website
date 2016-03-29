@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -24,7 +25,7 @@ public class GuidesDisplay {
 
 	private WebDriverWait wait;
 
-	@AfterClass(groups = { "firefox", "chrome" })
+	@AfterClass(groups = { "firefox", "chrome", "safari" })
 	public void afterClass() {
 		driver.quit();
 	}
@@ -43,7 +44,13 @@ public class GuidesDisplay {
 		wait = new WebDriverWait(driver, 10);
 	}
 
-	@Test(dataProvider = "guideData", groups = { "firefox", "chrome" })
+	@BeforeClass(groups = { "safari" })
+	public void beforeClassSafari() {
+		driver = new SafariDriver();
+		wait = new WebDriverWait(driver, 10);
+	}
+
+	@Test(dataProvider = "guideData", groups = { "firefox", "chrome", "safari" })
 	public void guideDisplayTest(String hero) {
 		boolean nextPage = true;
 		boolean guideLoads = true;
@@ -52,7 +59,7 @@ public class GuidesDisplay {
 		List<WebElement> pages = new ArrayList<WebElement>();
 		driver.get(BASE_URL);
 		wait.until(ExpectedConditions.visibilityOfElementLocated(
-				By.cssSelector(".box.wiki-grid.hero-rotation.mb10>div>div a[href*=" + hero))).click();
+				By.cssSelector(".box.wiki-grid.hero-rotation.mb10>div>div a[href*='" + hero + "']"))).click();
 		while (nextPage != false) {
 			guides.addAll(wait.until(
 					ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector(".browse-item-list>a[href]"))));
